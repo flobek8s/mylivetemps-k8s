@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  repository: harbor.flobek8s.com/library/mylivetemps
+  pullPolicy: Always
+  # Tag is set from Chart.yaml appVersion
+
+namespace: web-apps
+
+deployment:
+  volumeMounts:
+    name: php-code
+    mountPath: /var/www/html 
+
+persistentVolume:
+  enabled: true
+  name: mylivetemps-pv
+  capacity: 10Gi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.68.87
+    path: /srv/k8s-nfs/mylivetemps-k8s
+  reclaimPolicy: Retain
+
+persistentVolumeClaim:
+  enabled: true
+  name: mylivetemps-pvc
+  accessModes:
+    - ReadWriteMany
+  storage: 1Gi
+
+service:
+  service: mylivetemps-svc
+  port: 80
+
+ingress:
+  enabled: true
+  host: mylivetemps.flobek8s.com
+  secretName: wildcard-flobek8s-tls
