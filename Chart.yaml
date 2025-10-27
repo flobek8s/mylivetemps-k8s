@@ -1,6 +1,6 @@
 apiVersion: v2
-name: mylivetemps
-description: MyLiveTemps Web App
+name: mylivetemps-gh
+description: MyLiveTemps GitHub Web App
 type: application
 version: 1.0.0
 appVersion: 1.0.0

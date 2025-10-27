@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: harbor.flobek8s.com/library/mylivetemps
+  repository: harbor.flobek8s.com/library/mylivetemps-gh
   pullPolicy: Always
   # Tag is set from Chart.yaml appVersion
 
@@ -31,10 +31,10 @@ persistentVolumeClaim:
   storage: 1Gi
 
 service:
-  service: mylivetemps-svc
+  service: mylivetemps-gh-svc
   port: 80
 
 ingress:
   enabled: true
-  host: mylivetemps.flobek8s.com
+  host: temps.flobek8s.com
   secretName: wildcard-flobek8s-tls

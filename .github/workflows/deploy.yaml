@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        env:
+          HOME: /home/runner
+          GIT_CONFIG_GLOBAL: /home/runner/.gitconfig
+
+      - name: Log in to Harbor
+        env:
+          HARBOR_URL: ${{ secrets.HARBOR_URL }}
+          HARBOR_USER: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASS: ${{ secrets.HARBOR_PASSWORD }}
+        run: |
+          echo "Logging in to $HARBOR_URL..."
+          echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ secrets.HARBOR_URL }} -u ${{ secrets.HARBOR_USERNAME }} --password-stdin
+
+      - name: Get Docker Values
+        id: vars
+        run: |
+          IMAGE_REPO=$(yq -r '.image.repository' values.yaml)
+          IMAGE_TAG=$(yq -r '.appVersion' Chart.yaml)
+          echo "IMAGE_REPO=$IMAGE_REPO" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Build and push Docker image
+        run: |
+          echo "Building image: ${IMAGE_REPO}:${IMAGE_TAG}"
+          docker build -t ${IMAGE_REPO}:${IMAGE_TAG} .
+          docker push ${IMAGE_REPO}:${IMAGE_TAG}
+          echo "Image pushed successfully"
+
+      - name: Apply ArgoCD Application
+        run: kubectl apply -f ./argocd/argocd.yaml
