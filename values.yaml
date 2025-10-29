@@ -14,18 +14,18 @@ deployment:
 
 persistentVolume:
   enabled: true
-  name: mylivetemps-pv
+  name: mylivetemps-gh-pv
   capacity: 10Gi
   accessModes:
     - ReadWriteMany
   nfs:
     server: 192.168.68.87
-    path: /srv/k8s-nfs/mylivetemps-k8s
+    path: /srv/k8s-nfs/mylivetemps-gh-k8s
   reclaimPolicy: Retain
 
 persistentVolumeClaim:
   enabled: true
-  name: mylivetemps-pvc
+  name: mylivetemps-gh-pvc
   accessModes:
     - ReadWriteMany
   storage: 1Gi
